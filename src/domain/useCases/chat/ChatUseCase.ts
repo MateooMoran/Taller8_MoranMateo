@@ -51,6 +51,7 @@ export class ChatUseCase {
         .insert({
           contenido,
           usuario_id: user.id,
+          usuario_email: user.email,
         });
 
       if (error) throw error;
@@ -98,8 +99,9 @@ export class ChatUseCase {
                 contenido: payload.new.contenido,
                 usuario_id: payload.new.usuario_id,
                 created_at: payload.new.created_at,
+                usuario_email: payload.new.usuario_email || undefined,
                 usuario: {
-                  email: 'Desconocido',
+                  email: payload.new.usuario_email || 'Desconocido',
                   rol: 'usuario'
                 }
               };
@@ -116,7 +118,8 @@ export class ChatUseCase {
                 contenido: data.contenido,
                 usuario_id: data.usuario_id,
                 created_at: data.created_at,
-                usuario: data.usuarios || { email: 'Desconocido', rol: 'usuario' }
+                usuario_email: data.usuario_email || undefined,
+                usuario: data.usuarios || { email: data.usuario_email || 'Desconocido', rol: 'usuario' }
               };
 
               callback(mensajeFormateado);
@@ -130,8 +133,9 @@ export class ChatUseCase {
               contenido: payload.new.contenido,
               usuario_id: payload.new.usuario_id,
               created_at: payload.new.created_at,
+              usuario_email: payload.new.usuario_email || undefined,
               usuario: {
-                email: 'Desconocido',
+                email: payload.new.usuario_email || 'Desconocido',
                 rol: 'usuario'
               }
             };

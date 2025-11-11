@@ -43,10 +43,10 @@ export default function ChatScreen() {
 
   const renderMensaje = ({ item }: { item: Mensaje }) => {
     const esMio = item.usuario_id === usuario?.id;
-    // Mostrar siempre el correo electrónico cuando esté disponible.
-    // Si no hay email en el join, intentar usar el email del usuario autenticado (si es el autor).
+    // Preferir el email denormalizado (`usuario_email`) para evitar problemas con RLS
+    // Si no existe, usar el join `item.usuario?.email`, y como último recurso el email del usuario autenticado
     const emailUsuario =
-      item.usuario?.email || (item.usuario_id === usuario?.id ? usuario?.email : undefined) || "Usuario desconocido";
+      item.usuario_email || item.usuario?.email || (item.usuario_id === usuario?.id ? usuario?.email : undefined) || "Usuario desconocido";
 
     return (
       <View

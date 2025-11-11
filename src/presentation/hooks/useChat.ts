@@ -11,6 +11,7 @@ export const useChat = () => {
 
   // typing state: map usuario_id -> email
   const [typingMap, setTypingMap] = useState<Record<string, string>>({});
+  const typingMapRef = useRef<Record<string, string>>({});
   const typingTimeoutRef = useRef<any>(null);
   const isTypingLocalRef = useRef(false);
 
@@ -79,9 +80,16 @@ export const useChat = () => {
     cargarMensajes();
 
     const desuscribirMensajes = chatUseCase.suscribirseAMensajes((nuevoMensaje) => {
+      // If the incoming message lacks usuario_email, try to map it from current typingMap
+      const mapped = { ...nuevoMensaje } as Mensaje;
+      if (!mapped.usuario_email && typingMapRef.current[mapped.usuario_id]) {
+        mapped.usuario_email = typingMapRef.current[mapped.usuario_id];
+        mapped.usuario = { email: mapped.usuario_email, rol: 'usuario' };
+      }
+
       setMensajes(prev => {
-        if (prev.some(m => m.id === nuevoMensaje.id)) return prev;
-        return [...prev, nuevoMensaje];
+        if (prev.some(m => m.id === mapped.id)) return prev;
+        return [...prev, mapped];
       });
     });
 
@@ -93,6 +101,8 @@ export const useChat = () => {
         } else {
           delete copy[payload.usuario_id];
         }
+        // keep ref in sync
+        typingMapRef.current = copy;
         return copy;
       });
     });

@@ -8,4 +8,6 @@ export interface Mensaje {
     email: string;
     rol: string;
   };
+  // Denormalized email to avoid RLS/join issues
+  usuario_email?: string;
 }
